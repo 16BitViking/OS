@@ -1,0 +1,26 @@
+if we are accessing an even FAT entry:
+
+cluster 2:
+
+first byte is lower
+second byte lower nibble is the upper part
+
+if odd
+
+first byte's upper nibble is the lower part
+second byte is the upper part
+
+to convert cluster # to byte:
+
+(cluster # - 2) * 1.5 rounded down
+
+22 32 33 44 54 55 66 76 77
+
+cluster 2 -> starts at byte 0
+cluster 3 -> starts at byte 1
+cluster 4 -> starts at byte 3
+cluster 5 -> starts at byte 4
+cluster 6 -> starts at byte 6
+cluster 7 -> starts at byte 7
+
+cluster to byte: (cluster - 2) >> 1, multiply by 3 (+ 1 if odd)

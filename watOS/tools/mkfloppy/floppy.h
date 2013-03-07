@@ -1,3 +1,4 @@
+
 typedef struct __attribute__((packed))
 {
 	char initialJump[3];
@@ -30,18 +31,8 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-		
-} FATEntry;
-
-typedef struct __attribute__((packed))
-{
-		
+	char entries[512 * 9]; /* 9 sectors, 512b each */	
 } FAT;
-
-typedef struct __attribute__((packed))
-{
-	RDEntry entries[224]; /* 224 = max entries */
-} RootDirectory;
 
 typedef struct __attribute__((packed))
 {
@@ -59,6 +50,21 @@ typedef struct __attribute__((packed))
 	int fileSize; /* 0 for directories */
 
 } RDEntry; 
+
+typedef struct __attribute__((packed))
+{
+	RDEntry entries[224]; /* 224 = max entries */
+} RootDirectory;
+
+typedef struct __attribute__((packed))
+{
+	bootsect BS; /* sector 0 */
+	FAT fat1; /* sectors 1-9 */
+	FAT fat2; /* sectors 10-18 */
+	RootDirectory RD; /* sectors 19-32 */
+	char space[512 * 2847]; /* sectors 33 - 2879 */
+	
+} disk_144;
 
 #define INITBOOTSECT(a) \
 { \
@@ -81,4 +87,9 @@ typedef struct __attribute__((packed))
 	a->BIOSParameterBlock.sectorsPerTrack = 18;\
 	a->BIOSParameterBlock.heads = 2;\
 	strcpy(&(a->BIOSParameterBlock.FSID), "FAT12   "); \
+}
+
+#define CLUSTER_TO_OFFSET(c) \
+{ \
+ (c - 2) >> 1 * 3 + (c & 1);\
 }
